@@ -8,6 +8,7 @@ export interface IProjectsController {
     lastestUpdates: ReleaseProject[];
     highlights: ReleaseProject[];
   } | void>;
+  getProjectBySlug(slug: string): Promise<Project | void>;
   getChaptersByProject(item: ReleaseProject | Project): Promise<Project | void>;
   getPagsByChapter(chapter: Chapter): Promise<Chapter | void>;
   getProjectsBySearch(search: string): Promise<ReleaseProject[] | void>;
