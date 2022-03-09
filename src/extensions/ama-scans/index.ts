@@ -1,5 +1,6 @@
 import axios from "axios";
 import cheerio, { CheerioAPI } from "cheerio";
+import { Chapter } from "./entidades/Chapter";
 import { Project } from "./entidades/Project";
 import { ReleaseProject } from "./entidades/ReleaseProject";
 
@@ -56,28 +57,8 @@ export class AmaScans {
     });
     return Projects;
   }
-  //pega os dados de todos os projetos da home.
-  public async getHome(): Promise<{
-    lastestUpdates: ReleaseProject[];
-    highlights: ReleaseProject[];
-  }> {
-    const { data, status } = await this.router.get("/");
-    if (status !== 200) {
-      throw new Error("Falha ao obter dados da home");
-    }
-    const $ = cheerio.load(data);
-    const lastestUpdates = this.getLastestUpdatesHome($);
-    const highlights = this.getHighlightsHome($);
 
-    return { lastestUpdates, highlights };
-  }
-
-  public async getProjectBySlug(project: ReleaseProject): Promise<Project> {
-    const { data, status } = await this.router.get("/manga/" + project.id);
-    if (status !== 200) {
-      throw new Error("Falha ao obter dados do projeto");
-    }
-    const $ = cheerio.load(data);
+  private getInfosProject($: CheerioAPI): Map<string, string> {
     const infos = new Map<string, string>();
     var lastKey = "";
     $(".dl-horizontal")
@@ -101,6 +82,32 @@ export class AmaScans {
           infos.set(lastKey, $(e).text().trim());
         }
       });
+    return infos;
+  }
+
+  //pega os dados de todos os projetos da home.
+  public async getHome(): Promise<{
+    lastestUpdates: ReleaseProject[];
+    highlights: ReleaseProject[];
+  }> {
+    const { data, status } = await this.router.get("/");
+    if (status !== 200) {
+      throw new Error("Falha ao obter dados da home");
+    }
+    const $ = cheerio.load(data);
+    const lastestUpdates = this.getLastestUpdatesHome($);
+    const highlights = this.getHighlightsHome($);
+
+    return { lastestUpdates, highlights };
+  }
+
+  public async getProjectBySlug(project: ReleaseProject): Promise<Project> {
+    const { data, status } = await this.router.get("/manga/" + project.id);
+    if (status !== 200) {
+      throw new Error("Falha ao obter dados do projeto");
+    }
+    const $ = cheerio.load(data);
+    const infos = this.getInfosProject($);
     const description = $(".well > p").text().trim() || "Sem Sinopse";
     return {
       ...project,
@@ -112,6 +119,54 @@ export class AmaScans {
       genres: infos.get("Categorias:")?.split(", ") || [],
       alt_title: infos.get("Outros Nomes:") || "",
     };
+  }
+
+  public async getChaptersByProject(
+    item: ReleaseProject | Project
+  ): Promise<Project> {
+    var project = { ...item };
+    const { data, status } = await this.router.get("/manga/" + project.id);
+    if (status !== 200) {
+      throw new Error(
+        "Falha ao obter os dados da pagina para obter os capítulos"
+      );
+    }
+    const $ = cheerio.load(data);
+    if (!Project.isProject(project)) {
+      const infos = this.getInfosProject($);
+      const description = $(".well > p").text().trim() || "Sem Sinopse";
+      project = {
+        ...item,
+        description,
+        adult: infos.get("Categorias:")?.includes("Adulto") || false,
+        status: infos.get("Status:") || "Sem Status",
+        artist: infos.get("Artista(s):") || "Sem Artista",
+        author: infos.get("Autor(es):") || "Sem Autor",
+        genres: infos.get("Categorias:")?.split(", ") || [],
+        alt_title: infos.get("Outros Nomes:") || "",
+      };
+    }
+
+    const chapters: Chapter[] = [];
+    $(".chapters > li").each((i, element) => {
+      const chapter = $(element).find(".chapter-title-rtl");
+      const link = chapter.find("a").attr("href") || "";
+      const title = chapter.text().trim().replace(/\n/gi, "") || "";
+      const action = $(element).find(".action");
+      chapters.push({
+        title,
+        link,
+        id: this.getSlugByUrl(link),
+        number: link.replace(this.baseUrl + "/manga/" + project.id + "/", ""),
+        release_date: action
+          .find(".date-chapter-title-rtl")
+          .text()
+          .trim()
+          .replace(/\n/gi, ""),
+      });
+    });
+    project.chapters = chapters;
+    return project;
   }
 
   public async getProjectsBySearch(search: string) {
@@ -145,7 +200,7 @@ export class AmaScans {
     }
     const Projects: ReleaseProject[] = [];
     const $2 = cheerio.load(response);
-    
+
     $2(".col-sm-6").each((i, element) => {
       const a = $(element).find(".thumbnail");
       const cover_uri = a.find("img").attr("src");
@@ -162,4 +217,4 @@ export class AmaScans {
     return Projects;
   }
 }
-//new AmaScans().getProjectsByGenre("Adulto");
+new AmaScans().getChaptersByProject(ReleaseProjectTest);
