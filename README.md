@@ -2,10 +2,12 @@
 
 # Recurso
 ##### Funções para fazer web scraping em sites de scans.
-- Home - trazendo os mangá recentes e os populares.
-- Detalhes - buscando informações extras de um projeto especifico.
-- ainda falta implementar...
-
+- Home.
+- Detalhes.
+- Busca.
+- Capitulos.
+- Busca por generos.
+- Paginas
 # Desenvolver
 #### instalação de dependencias
 ```bash
@@ -21,3 +23,8 @@ $ git clone https://github.com/project-arashi/arashi-extensions.git
 $ cd arashi-extensions
 $ yarn 
 ```
+
+# Extensões
+| Scan | Home | Detalhes | Busca | Capitulos | Busca por generos | Paginas | 
+| ---- | ---- | -------- | ----- | --------- | ----------------- | ------- |
+| [AMA Scans](https://amascan.com/) | ✔️ | ✔️ ️| ❌ | ✔️ | ✔️ |  ❌
