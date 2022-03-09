@@ -5,6 +5,7 @@ export class Chapter {
   public link: string;
   public release_date: string;
   public download_uri?: string;
+  public pags?: string[];
   constructor(props: Chapter) {
     Object.assign(this, props);
   }
