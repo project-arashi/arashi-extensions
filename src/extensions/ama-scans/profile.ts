@@ -8,6 +8,10 @@ const profile = new ProfileScan({
   recruiting_uri: "https://amascan.com/recrutamento-ama-scan",
   social: [
     {
+      name:"facebook",
+      uri:"https://www.facebook.com/amascans",
+    },
+    {
       name: "twitter",
       uri: "https://twitter.com/amagrupo",
     },
