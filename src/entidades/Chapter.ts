@@ -1,5 +1,6 @@
 export class Chapter {
   public id: string | number;
+  public id_project: string | number;
   public title: string;
   public number: string;
   public link: string;
