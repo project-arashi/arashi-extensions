@@ -11,7 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/dist/extensions/momo-no-hana-scans/index.js",
+            "program": "${workspaceFolder}/dist/extensions/momo-no-hana-scans/projects.js",
             "outFiles": [
                 "${workspaceFolder}/dist/**/*.js"
             ]
