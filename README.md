@@ -27,4 +27,4 @@ $ yarn
 # Extensões
 | Scan | Home | Detalhes | Busca | Capitulos | Busca por generos | Paginas | 
 | ---- | ---- | -------- | ----- | --------- | ----------------- | ------- |
-| [AMA Scans](https://amascan.com/) | ✔️ | ✔️ ️| ❌ | ✔️ | ✔️ |  ❌
+| [AMA Scans](https://amascan.com/) | ✔️ | ✔️ ️| ❌ | ✔️ | ✔️ |  ✔️
