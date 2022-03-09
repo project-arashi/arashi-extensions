@@ -3,8 +3,9 @@ import cheerio, { CheerioAPI } from "cheerio";
 import { Chapter } from "../../entidades/Chapter";
 import { Project } from "../../entidades/Project";
 import { ReleaseProject } from "../../entidades/ReleaseProject";
+import { IProjectsController } from "../../repositorios/IProjectsController";
 
-export class AmaScansProjects {
+export class AmaScansProjects implements IProjectsController {
   private baseUrl = "https://amascan.com";
   private router = axios.create({
     baseURL: this.baseUrl,
@@ -105,6 +106,7 @@ export class AmaScansProjects {
     return { lastestUpdates, highlights };
   }
 
+  //pega os dados de algum projeto usando o slug dele.
   public async getProjectBySlug(project: ReleaseProject): Promise<Project> {
     const { data, status } = await this.router.get("/manga/" + project.id);
     if (status !== 200) {
@@ -191,7 +193,7 @@ export class AmaScansProjects {
     chapter.pags = [];
     const $ = cheerio.load(data);
     $("#all > .img-responsive").each((i, element) => {
-      const img = $(element).attr("data-src")?.replace(/[ ]/gi,"") || "";
+      const img = $(element).attr("data-src")?.replace(/[ ]/gi, "") || "";
       chapter.pags?.push(img);
     });
     return chapter;
