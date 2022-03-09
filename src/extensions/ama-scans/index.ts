@@ -18,7 +18,7 @@ export class AmaScans {
   }
 
   //cria o array para os projetos em destaque
-  private getHighlights($: CheerioAPI): ReleaseProject[] {
+  private getHighlightsHome($: CheerioAPI): ReleaseProject[] {
     const highlights: ReleaseProject[] = [];
     $(".span3").each((i, element) => {
       const img = $(element).find(".thumbnail > img");
@@ -39,7 +39,7 @@ export class AmaScans {
     return highlights;
   }
   //cria o array para os ultimos projetos publicados
-  private getLastestUpdates($: CheerioAPI): ReleaseProject[] {
+  private getLastestUpdatesHome($: CheerioAPI): ReleaseProject[] {
     const Projects: ReleaseProject[] = [];
     $(".col-sm-6").each((i, element) => {
       const thumbnail = $(element).find(".thumbnail");
@@ -63,11 +63,11 @@ export class AmaScans {
   }> {
     const { data, status } = await this.router.get("/");
     if (status !== 200) {
-      throw new Error("Failed to get home page");
+      throw new Error("Falha ao obter dados da home");
     }
     const $ = cheerio.load(data);
-    const lastestUpdates = this.getLastestUpdates($);
-    const highlights = this.getHighlights($);
+    const lastestUpdates = this.getLastestUpdatesHome($);
+    const highlights = this.getHighlightsHome($);
 
     return { lastestUpdates, highlights };
   }
@@ -75,7 +75,7 @@ export class AmaScans {
   public async getProjectBySlug(project: ReleaseProject): Promise<Project> {
     const { data, status } = await this.router.get("/manga/" + project.id);
     if (status !== 200) {
-      throw new Error("Failed to get project by slug");
+      throw new Error("Falha ao obter dados do projeto");
     }
     const $ = cheerio.load(data);
     const infos = new Map<string, string>();
@@ -113,6 +113,53 @@ export class AmaScans {
       alt_title: infos.get("Outros Nomes:") || "",
     };
   }
-}
 
-new AmaScans().getProjectBySlug(ReleaseProjectTest);
+  public async getProjectsBySearch(search: string) {
+    //ainda não implementado
+  }
+
+  public async getProjectsByGenre(genre: string): Promise<ReleaseProject[]> {
+    const { data, status } = await this.router.get("/manga-list");
+    if (status !== 200) {
+      throw new Error("Falha ao obter dados da pagina de listagem");
+    }
+    const $ = cheerio.load(data);
+    const genres = new Map<string, string>();
+    //pegando todos os generos e seu href
+    $(".list-category > li").each((i, e) => {
+      const li = $(e).find(".category");
+      genres.set(li.text(), li.attr("href") || "");
+    });
+
+    const genreUrl = genres.get(genre);
+    if (!genreUrl) return [];
+
+    const { data: response, ...rest } = await this.router.get(
+      `/filterList?page=1&cat=${genreUrl.replace(
+        /.*cat=/,
+        ""
+      )}&alpha=&sortBy=name&asc=true&author=&artist=&tag=`
+    );
+    if (rest.status !== 200) {
+      throw new Error("Falha ao obter dados dos projetos por genero");
+    }
+    const Projects: ReleaseProject[] = [];
+    const $2 = cheerio.load(response);
+    
+    $2(".col-sm-6").each((i, element) => {
+      const a = $(element).find(".thumbnail");
+      const cover_uri = a.find("img").attr("src");
+      const subtitle = $(element).find(".chart-title > a");
+      const href = a.attr("href");
+      Projects.push({
+        id: cover_uri ? this.getSlugByUrl(cover_uri) : i,
+        title: a.find("img").attr("alt") || "",
+        cover_uri: cover_uri || "",
+        lastChapter: subtitle.text() || "",
+        link: href || "",
+      });
+    });
+    return Projects;
+  }
+}
+//new AmaScans().getProjectsByGenre("Adulto");
