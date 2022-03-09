@@ -28,3 +28,4 @@ $ yarn
 | Scan | Home | Detalhes | Busca | Capitulos | Busca por generos | Paginas | 
 | ---- | ---- | -------- | ----- | --------- | ----------------- | ------- |
 | [AMA Scans](https://amascan.com/) | ✔️ | ✔️ ️| ❌ | ✔️ | ✔️ |  ✔️
+| [Mono No Hana Scan](https://www.momonohanascan.com/) | ✔️ | ❌ ️| ❌ | ❌ | ❌ |  ❌
