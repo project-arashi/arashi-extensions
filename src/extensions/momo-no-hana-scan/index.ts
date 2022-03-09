@@ -1,8 +1,9 @@
 import axios from "axios";
 import ProfileScan from "./profile";
+import * as Projects from "./projects";
 
-const Router = axios.create({
-  baseURL: ProfileScan.website_uri,
-});
+const MonoNoHanaScansProject = new Projects.MomoNoHanaScansProject(
+  ProfileScan.website_uri
+);
 
-export { ProfileScan };
+export { MonoNoHanaScansProject, ProfileScan };
