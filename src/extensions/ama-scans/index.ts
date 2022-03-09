@@ -1,8 +1,8 @@
 import axios from "axios";
 import cheerio, { CheerioAPI } from "cheerio";
-import { Chapter } from "./entidades/Chapter";
-import { Project } from "./entidades/Project";
-import { ReleaseProject } from "./entidades/ReleaseProject";
+import { Chapter } from "../../entidades/Chapter";
+import { Project } from "../../entidades/Project";
+import { ReleaseProject } from "../../entidades/ReleaseProject";
 
 const ReleaseProjectTest = ReleaseProject.createTest();
 
