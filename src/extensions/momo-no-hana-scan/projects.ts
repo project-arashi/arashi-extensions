@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-import cheerio from "cheerio";
+import cheerio, { CheerioAPI } from "cheerio";
 
 import { Chapter } from "../../entidades/Chapter";
 import { Project } from "../../entidades/Project";
@@ -16,7 +16,50 @@ export class MomoNoHanaScansProject implements IProjectsController {
   }
 
   private getSlugProjectByUri(url: string): string {
-    return url.replace(this.baseUrl + "/manga/", "").replace("/", "");
+    return url.split("/")[4];
+  }
+
+  private getLastestUpdates($: CheerioAPI): ReleaseProject[] {
+    const lastestUpdates: ReleaseProject[] = [];
+    $(".page-item-detail.manga").each((i, element) => {
+      const div = $(element).find(".item-thumb.c-image-hover");
+      const linkProject = div.find("a").attr("href") || "";
+      const lastChapter = $(element).find(".btn-link").first();
+
+      lastestUpdates.push({
+        title: div.find("a").attr("title") || "",
+        cover_uri: div.find("img").attr("src") || "",
+        link: lastChapter.attr("href") || "",
+        id: this.getSlugProjectByUri(linkProject) || "",
+        lastChapter: lastChapter.text() || "",
+      });
+    });
+    return lastestUpdates;
+  }
+
+  private getHighlightsHome($: CheerioAPI): ReleaseProject[] {
+    const highlights: ReleaseProject[] = [];
+
+    $(".item__wrap").each((i, element) => {
+      const chapterItem = $(element).find(".chapter > a").first();
+      const slider__thumb = $(element).find(".slider__thumb");
+        const id = slider__thumb.find("a").attr("href") || "";
+      highlights.push({
+        title:
+          $(element)
+            .find(".post-title.font-title")
+            .text()
+            .trim()
+            .replace(/\n/gi, "") || "",
+        link: chapterItem.attr("href") || "",
+        lastChapter: chapterItem.text() || "",
+        id:
+          this.getSlugProjectByUri(id) || "",
+        cover_uri: slider__thumb.find("img").attr("src") || "",
+      });
+    });
+
+    return highlights;
   }
 
   async getHome(): Promise<void | {
@@ -29,24 +72,11 @@ export class MomoNoHanaScansProject implements IProjectsController {
     }
 
     const $ = cheerio.load(data);
+    const lastestUpdates = this.getLastestUpdates($);
 
-    const lastestUpdates: ReleaseProject[] = [];
+    const highlights = this.getHighlightsHome($);
 
-    $(".page-item-detail.manga").each((i, element) => {
-      const div = $(element).find(".item-thumb.c-image-hover");
-      const linkProject = div.find("a").attr("href") || "";
-      const lastChapter = $(element)
-        .find(".list-chapter > .chapter-item > .btn-link")
-        .first();
-      lastestUpdates.push({
-        title: div.find("a").attr("title") || "",
-        cover_uri: div.find("img").attr("src") || "",
-        link: lastChapter.attr("href") || "",
-        id: this.getSlugProjectByUri(linkProject) || "",
-        lastChapter: lastChapter.text() || "",
-      });
-    });
-    return { lastestUpdates, highlights: [] };
+    return { lastestUpdates, highlights };
   }
 
   async getProjectByRelease(project: ReleaseProject): Promise<void | Project> {}
@@ -58,3 +88,5 @@ export class MomoNoHanaScansProject implements IProjectsController {
   async getProjectsByGenre(genres: string): Promise<void | ReleaseProject[]> {}
   async getProjectsBySearch(search: string): Promise<void | ReleaseProject[]> {}
 }
+
+new MomoNoHanaScansProject("https://www.momonohanascan.com/").getHome();
