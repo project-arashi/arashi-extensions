@@ -107,7 +107,7 @@ export class AmaScansProjects implements IProjectsController {
   }
 
   //pega os dados de algum projeto usando o slug dele.
-  public async getProjectBySlug(project: ReleaseProject): Promise<Project> {
+  public async getProjectByRelease(project: ReleaseProject): Promise<Project> {
     const { data, status } = await this.router.get("/manga/" + project.id);
     if (status !== 200) {
       throw new Error("Falha ao obter dados do projeto");
