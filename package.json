@@ -1,11 +1,24 @@
 {
   "name": "arashi-extensions",
+  "description": "Extensões das scans para fazer web scrapping buscando informações dos projetos que fazem.",
   "version": "1.0.0",
   "main": "index.js",
+  "author": "SDMasterGames",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.26.0",
     "cheerio": "^1.0.0-rc.10"
+  },
+  "repository": "project-arashi/arashi-extensions",
+  "keywords": [
+    "arashi",
+    "extensions",
+    "scans",
+    "mangas",
+    "br"
+  ],
+  "engines": {
+    "node": ">=16.13.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.21",
