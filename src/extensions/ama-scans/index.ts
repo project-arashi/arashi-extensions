@@ -124,7 +124,7 @@ export class AmaScans {
   public async getChaptersByProject(
     item: ReleaseProject | Project
   ): Promise<Project> {
-    var project = { ...item };
+    var project = {...item} 
     const { data, status } = await this.router.get("/manga/" + project.id);
     if (status !== 200) {
       throw new Error(
@@ -132,6 +132,8 @@ export class AmaScans {
       );
     }
     const $ = cheerio.load(data);
+
+    //caso seja um ReleaseProject pega o restante dos dados
     if (!Project.isProject(project)) {
       const infos = this.getInfosProject($);
       const description = $(".well > p").text().trim() || "Sem Sinopse";
@@ -160,9 +162,7 @@ export class AmaScans {
         number: link.replace(this.baseUrl + "/manga/" + project.id + "/", ""),
         release_date: action
           .find(".date-chapter-title-rtl")
-          .text()
-          .trim()
-          .replace(/\n/gi, ""),
+          .text().trim().replace(/\n/gi, ""),
       });
     });
     project.chapters = chapters;
