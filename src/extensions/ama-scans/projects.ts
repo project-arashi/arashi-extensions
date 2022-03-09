@@ -4,8 +4,6 @@ import { Chapter } from "../../entidades/Chapter";
 import { Project } from "../../entidades/Project";
 import { ReleaseProject } from "../../entidades/ReleaseProject";
 
-const ReleaseProjectTest = ReleaseProject.createTest();
-
 export class AmaScansProjects {
   private baseUrl = "https://amascan.com";
   private router = axios.create({
@@ -14,7 +12,7 @@ export class AmaScansProjects {
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
     this.router = axios.create({
-      baseURL:baseUrl,
+      baseURL: baseUrl,
     });
   }
   private getSlugByUrl(url: string): string {
@@ -161,11 +159,16 @@ export class AmaScansProjects {
       const link = chapter.find("a").attr("href") || "";
       const title = chapter.text().trim().replace(/\n/gi, "") || "";
       const action = $(element).find(".action");
+      const number = link.replace(
+        this.baseUrl + "/manga/" + project.id + "/",
+        ""
+      );
       chapters.push({
         title,
         link,
-        id: this.getSlugByUrl(link),
-        number: link.replace(this.baseUrl + "/manga/" + project.id + "/", ""),
+        id_project: project.id,
+        id: this.getSlugByUrl(link) + "-" + number,
+        number,
         release_date: action
           .find(".date-chapter-title-rtl")
           .text()
@@ -175,6 +178,23 @@ export class AmaScansProjects {
     });
     project.chapters = chapters;
     return project;
+  }
+
+  public async getPagsByChapter(chapter: Chapter): Promise<Chapter> {
+    const { data, status } = await this.router.get(
+      `/manga/${chapter.id_project}/${chapter.number}`
+    );
+
+    if (status !== 200) {
+      throw new Error("Falha ao obter os dados da pagina para obter as pags");
+    }
+    chapter.pags = [];
+    const $ = cheerio.load(data);
+    $("#all > .img-responsive").each((i, element) => {
+      const img = $(element).attr("data-src")?.replace(/[ ]/gi,"") || "";
+      chapter.pags?.push(img);
+    });
+    return chapter;
   }
 
   public async getProjectsBySearch(search: string) {
