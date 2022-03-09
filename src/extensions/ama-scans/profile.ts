@@ -19,6 +19,10 @@ const profile = new ProfileScan({
       name: "youtube",
       uri: "https://www.youtube.com/c/AmaGrupo",
     },
+    {
+      name:"discord",
+      uri:"https://discord.com/invite/ntfGsDb"
+    }
   ],
 });
 
