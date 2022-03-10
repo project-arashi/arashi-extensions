@@ -189,6 +189,15 @@ export class MomoNoHanaScansProject implements IProjectsController {
   lastChapter: "Capítulo 20 - FIM ",
 }); */
 
+const ChapterTest = new Chapter({
+  id: "capitulo-20",
+  id_project: "black-kanojo",
+  link: "https://www.momonohanascan.com/manga/black-kanojo/capitulo-20/",
+  number: "20",
+  release_date: "2020-10-10",
+  title: "Capítulo 20 - Fim",
+})
+
 /* new MomoNoHanaScansProject(
   "https://www.momonohanascan.com"
 ).getChaptersByProject(ReleaseProjectTest); */
