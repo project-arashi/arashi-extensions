@@ -24,7 +24,7 @@ export class AmaScansProjects implements IProjectsController {
   }
 
   //cria o array para os projetos em destaque
-  private getHighlightsHome($: CheerioAPI): ReleaseProject[] {
+  private CheerioHighlightsHome($: CheerioAPI): ReleaseProject[] {
     const highlights: ReleaseProject[] = [];
     $(".span3").each((i, element) => {
       const img = $(element).find(".thumbnail > img");
@@ -45,7 +45,7 @@ export class AmaScansProjects implements IProjectsController {
     return highlights;
   }
   //cria o array para os ultimos projetos publicados
-  private getLastestUpdatesHome($: CheerioAPI): ReleaseProject[] {
+  private CheerioLastestUpdatesHome($: CheerioAPI): ReleaseProject[] {
     const Projects: ReleaseProject[] = [];
     $(".col-sm-6").each((i, element) => {
       const thumbnail = $(element).find(".thumbnail");
@@ -63,7 +63,7 @@ export class AmaScansProjects implements IProjectsController {
     return Projects;
   }
 
-  private getInfosProject($: CheerioAPI): Map<string, string> {
+  private CheerioInfosProject($: CheerioAPI): Map<string, string> {
     const infos = new Map<string, string>();
     var lastKey = "";
     $(".dl-horizontal")
@@ -100,8 +100,8 @@ export class AmaScansProjects implements IProjectsController {
       throw new Error("Falha ao obter dados da home");
     }
     const $ = cheerio.load(data);
-    const lastestUpdates = this.getLastestUpdatesHome($);
-    const highlights = this.getHighlightsHome($);
+    const lastestUpdates = this.CheerioLastestUpdatesHome($);
+    const highlights = this.CheerioHighlightsHome($);
 
     return { lastestUpdates, highlights };
   }
@@ -113,7 +113,7 @@ export class AmaScansProjects implements IProjectsController {
       throw new Error("Falha ao obter dados do projeto");
     }
     const $ = cheerio.load(data);
-    const infos = this.getInfosProject($);
+    const infos = this.CheerioInfosProject($);
     const description = $(".well > p").text().trim() || "Sem Sinopse";
     return {
       ...project,
@@ -141,7 +141,7 @@ export class AmaScansProjects implements IProjectsController {
 
     //caso seja um ReleaseProject pega o restante dos dados
     if (!Project.isProject(project)) {
-      const infos = this.getInfosProject($);
+      const infos = this.CheerioInfosProject($);
       const description = $(".well > p").text().trim() || "Sem Sinopse";
       project = {
         ...item,

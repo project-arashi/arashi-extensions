@@ -261,7 +261,7 @@ export class MomoNoHanaScansProject implements IProjectsController {
   release_date: "2020-10-10",
   title: "Capítulo 20 - Fim",
 }); */
-/* 
-new MomoNoHanaScansProject(
+
+/* new MomoNoHanaScansProject(
   "https://www.momonohanascan.com"
 ).getProjectsBySearch("kanojo"); */
