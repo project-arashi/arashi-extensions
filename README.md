@@ -31,4 +31,4 @@ $ yarn
 | Scan | Home | Detalhes | Capitulos | Paginas | Buscar por gênero | Buscar | 
 | ---- | ---- | -------- | ----- | --------- | ----------------- | ------- |
 | [AMA Scans](https://amascan.com/) | ✔️ | ✔️ ️| ✔️ | ✔️ | ✔️ | ❌
-| [Momo No Hana Scan](https://www.momonohanascan.com/) | ✔️ | ✔️ ️| ✔️ | ✔️ | ❌ | ❌
+| [Momo No Hana Scan](https://www.momonohanascan.com/) | ✔️ | ✔️ ️| ✔️ | ✔️ | ✔️ | ❌
