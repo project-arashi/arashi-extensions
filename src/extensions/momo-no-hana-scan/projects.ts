@@ -61,6 +61,16 @@ export class MomoNoHanaScansProject implements IProjectsController {
     return highlights;
   }
 
+  private getInfosProject($: CheerioAPI): Map<string, string> {
+    const infos = new Map<string, string>();
+    $(".post-content_item").each((i, e) => {
+      const key = $(e).find(".summary-heading").text().trim();
+      const value = $(e).find(".summary-content").text().trim();
+      infos.set(key, value);
+    });
+    return infos;
+  }
+
   async getHome(): Promise<void | {
     lastestUpdates: ReleaseProject[];
     highlights: ReleaseProject[];
@@ -77,7 +87,6 @@ export class MomoNoHanaScansProject implements IProjectsController {
 
     return { lastestUpdates, highlights };
   }
-
   async getProjectByRelease(project: ReleaseProject): Promise<void | Project> {
     const { data, status } = await this.router("/manga/" + project.id);
 
@@ -86,7 +95,6 @@ export class MomoNoHanaScansProject implements IProjectsController {
     }
 
     const $ = cheerio.load(data);
-    const infos = new Map<string, string>();
     const description = $(".summary__content.show-more").text().trim();
     const painelInfos = $(".summary_content");
     const statusProject = painelInfos
@@ -94,11 +102,7 @@ export class MomoNoHanaScansProject implements IProjectsController {
       .last()
       .text()
       .trim();
-    $(".post-content_item").each((i, e) => {
-      const key = $(e).find(".summary-heading").text().trim();
-      const value = $(e).find(".summary-content").text().trim();
-      infos.set(key, value);
-    });
+    const infos = this.getInfosProject($);
     const genres = infos.get("Gênero(s)")?.split(", ") || [];
     return {
       ...project,
@@ -113,7 +117,61 @@ export class MomoNoHanaScansProject implements IProjectsController {
   }
   async getChaptersByProject(
     item: ReleaseProject | Project
-  ): Promise<void | Project> {}
+  ): Promise<void | Project> {
+    var project = { ...item };
+    const { data, status } = await this.router.get("/manga/" + item.id);
+    if (status !== 200) {
+      throw new Error("Falha ao carregar a pagina do projeto");
+    }
+    const $ = cheerio.load(data);
+
+    if (!Project.isProject(project)) {
+      const infos = this.getInfosProject($);
+      const description = $(".summary__content.show-more").text().trim();
+      const genres = infos.get("Gênero(s)")?.split(", ") || [];
+      const statusProject = $(".summary_content")
+        .find(".summary-content")
+        .last()
+        .text()
+        .trim();
+      project = {
+        ...project,
+        description,
+        status: statusProject,
+        adult: genres.includes("Adulto") || genres.includes("Horror"),
+        alt_title: infos.get("Nome Alternativo") || "",
+        artist: infos.get("Artista(s)") || "Desconhecido",
+        author: infos.get("Autor(es)") || "Desconhecido",
+        genres,
+      };
+    }
+    const { data: ChapterListHtml, status: ChapterStatus } =
+      await this.router.post(`/manga/${item.id}/ajax/chapters`);
+    if (ChapterStatus !== 200) return { ...project, chapters: [] };
+
+    const $2 = cheerio.load(ChapterListHtml);
+    const chapters: Chapter[] = [];
+
+    $2(".main.version-chap.no-volumn > li").each((i, e) => {
+      const a = $(e).find("a");
+      const link = a.attr("href") || "";
+      const id =
+        link
+          .replace(`${this.baseUrl}/manga/${item.id}/`, "")
+          .replace("/", "") || "";
+      chapters.push({
+        id,
+        id_project: item.id,
+        link,
+        number:
+        id.match(/\d.*/)?.[0].replace("-", ".") || "",
+        release_date: $(e).find(".chapter-release-date").text().trim() || "",
+        title: a.text().trim() || "",
+      });
+    });
+    project.chapters = chapters;
+    return project;
+  }
 
   async getPagsByChapter(chapter: Chapter): Promise<void | Chapter> {}
   async getProjectsByGenre(genres: string): Promise<void | ReleaseProject[]> {}
@@ -130,5 +188,5 @@ const ReleaseProjectTest = new ReleaseProject({
 });
 
 new MomoNoHanaScansProject(
-  "https://www.momonohanascan.com/"
-).getProjectByRelease(ReleaseProjectTest);
+  "https://www.momonohanascan.com"
+).getChaptersByProject(ReleaseProjectTest);
