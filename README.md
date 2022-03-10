@@ -2,12 +2,12 @@
 
 # Recurso
 ##### Funções para fazer web scraping em sites de scans.
-- Home.
-- Detalhes.
-- Capitulos.
-- Paginas
-- Buscar.
-- Buscar por gênero.
+- Home - Busca todos os projetos que esteja na home, separando em lançamentos e populares.
+- Detalhes - Busca as informações extras de um projeto (ex:Sinopse, Status, autor etc...).
+- Capitulos - Busca todos os capitulos.
+- Paginas - Busca todas as paginas de um capitulo.
+- Buscar - Busca projetos que contenham o termo especificado.
+- Buscar por gênero - Busca projetos que tenha o genero especificado.
 
 **Buscar** e **Buscar por gênero** são funções opcionais.
 
