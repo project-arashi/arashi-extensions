@@ -163,8 +163,7 @@ export class MomoNoHanaScansProject implements IProjectsController {
         id,
         id_project: item.id,
         link,
-        number:
-        id.match(/\d.*/)?.[0].replace("-", ".") || "",
+        number: id.match(/\d.*/)?.[0].replace("-", ".") || "",
         release_date: $(e).find(".chapter-release-date").text().trim() || "",
         title: a.text().trim() || "",
       });
@@ -173,7 +172,26 @@ export class MomoNoHanaScansProject implements IProjectsController {
     return project;
   }
 
-  async getPagsByChapter(chapter: Chapter): Promise<void | Chapter> {}
+  async getPagsByChapter(chapter: Chapter): Promise<void | Chapter> {
+    const { data, status } = await this.router.get(
+      `/manga/${chapter.id_project}/${chapter.id}/?style=list`
+    );
+    if (status !== 200) {
+      throw new Error("Falha ao carregar a pagina do capitulo");
+    }
+
+    const $ = cheerio.load(data);
+
+    const pags: string[] = [];
+
+    $(".page-break.no-gaps").each((i, e) => {
+      const img = $(e).find("img");
+      const src = img.attr("src")?.trim() || "";
+      pags.push(src);
+    });
+    chapter.pags = pags;
+    return chapter;
+  }
   async getProjectsByGenre(genres: string): Promise<void | ReleaseProject[]> {}
   async getProjectsBySearch(search: string): Promise<void | ReleaseProject[]> {}
 }
@@ -189,15 +207,15 @@ export class MomoNoHanaScansProject implements IProjectsController {
   lastChapter: "Capítulo 20 - FIM ",
 }); */
 
-const ChapterTest = new Chapter({
+/* const ChapterTest = new Chapter({
   id: "capitulo-20",
   id_project: "black-kanojo",
   link: "https://www.momonohanascan.com/manga/black-kanojo/capitulo-20/",
   number: "20",
   release_date: "2020-10-10",
   title: "Capítulo 20 - Fim",
-})
+}); */
 
-/* new MomoNoHanaScansProject(
-  "https://www.momonohanascan.com"
-).getChaptersByProject(ReleaseProjectTest); */
+/* new MomoNoHanaScansProject("https://www.momonohanascan.com").getPagsByChapter(
+  ChapterTest
+); */
