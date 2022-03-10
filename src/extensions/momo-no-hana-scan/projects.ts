@@ -19,7 +19,7 @@ export class MomoNoHanaScansProject implements IProjectsController {
     return url.split("/")[4];
   }
 
-  private getLastestUpdates($: CheerioAPI): ReleaseProject[] {
+  private CheerioLastestUpdates($: CheerioAPI): ReleaseProject[] {
     const lastestUpdates: ReleaseProject[] = [];
     $(".page-item-detail.manga").each((i, element) => {
       const div = $(element).find(".item-thumb.c-image-hover");
@@ -37,7 +37,7 @@ export class MomoNoHanaScansProject implements IProjectsController {
     return lastestUpdates;
   }
 
-  private getHighlightsHome($: CheerioAPI): ReleaseProject[] {
+  private CheerioHighlightsHome($: CheerioAPI): ReleaseProject[] {
     const highlights: ReleaseProject[] = [];
 
     $(".item__wrap").each((i, element) => {
@@ -61,7 +61,7 @@ export class MomoNoHanaScansProject implements IProjectsController {
     return highlights;
   }
 
-  private getInfosProject($: CheerioAPI): Map<string, string> {
+  private CheerioInfosProject($: CheerioAPI): Map<string, string> {
     const infos = new Map<string, string>();
     $(".post-content_item").each((i, e) => {
       const key = $(e).find(".summary-heading").text().trim();
@@ -100,9 +100,9 @@ export class MomoNoHanaScansProject implements IProjectsController {
     }
 
     const $ = cheerio.load(data);
-    const lastestUpdates = this.getLastestUpdates($);
+    const lastestUpdates = this.CheerioLastestUpdates($);
 
-    const highlights = this.getHighlightsHome($);
+    const highlights = this.CheerioHighlightsHome($);
 
     return { lastestUpdates, highlights };
   }
@@ -121,7 +121,7 @@ export class MomoNoHanaScansProject implements IProjectsController {
       .last()
       .text()
       .trim();
-    const infos = this.getInfosProject($);
+    const infos = this.CheerioInfosProject($);
     const genres = infos.get("Gênero(s)")?.split(", ") || [];
     return {
       ...project,
@@ -145,7 +145,7 @@ export class MomoNoHanaScansProject implements IProjectsController {
     const $ = cheerio.load(data);
 
     if (!Project.isProject(project)) {
-      const infos = this.getInfosProject($);
+      const infos = this.CheerioInfosProject($);
       const description = $(".summary__content.show-more").text().trim();
       const genres = infos.get("Gênero(s)")?.split(", ") || [];
       const statusProject = $(".summary_content")
@@ -261,7 +261,7 @@ export class MomoNoHanaScansProject implements IProjectsController {
   release_date: "2020-10-10",
   title: "Capítulo 20 - Fim",
 }); */
-
+/* 
 new MomoNoHanaScansProject(
   "https://www.momonohanascan.com"
-).getProjectsBySearch("kanojo");
+).getProjectsBySearch("kanojo"); */
