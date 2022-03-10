@@ -178,15 +178,17 @@ export class MomoNoHanaScansProject implements IProjectsController {
   async getProjectsBySearch(search: string): Promise<void | ReleaseProject[]> {}
 }
 
-const ReleaseProjectTest = new ReleaseProject({
+// Use para testar alguma função em especifico
+
+/* const ReleaseProjectTest = new ReleaseProject({
   id: "black-kanojo",
   title: "Black Kanojo",
   cover_uri:
     "https://cdn.statically.io/img/www.momonohanascan.com/wp-content/uploads/2021/10/9784040682402-193x278.jpg?quality=90&f=auto",
   link: "https://www.momonohanascan.com/manga/black-kanojo/",
   lastChapter: "Capítulo 20 - FIM ",
-});
+}); */
 
-new MomoNoHanaScansProject(
+/* new MomoNoHanaScansProject(
   "https://www.momonohanascan.com"
-).getChaptersByProject(ReleaseProjectTest);
+).getChaptersByProject(ReleaseProjectTest); */
