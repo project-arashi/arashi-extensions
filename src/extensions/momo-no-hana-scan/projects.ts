@@ -192,7 +192,33 @@ export class MomoNoHanaScansProject implements IProjectsController {
     chapter.pags = pags;
     return chapter;
   }
-  async getProjectsByGenre(genres: string): Promise<void | ReleaseProject[]> {}
+  async getProjectsByGenre(genres: string): Promise<void | ReleaseProject[]> {
+    const { data, status } = await this.router.get(
+      `/?s=&post_type=wp-manga&genre%5B%5D=${genres}&op=&author=&artist=&release=&adult=`
+    );
+
+    if (status !== 200) {
+      throw new Error("Falha ao carregar a pagina com o genero escolhido");
+    }
+    const $ = cheerio.load(data);
+
+    const projects: ReleaseProject[] = [];
+
+    $(".row.c-tabs-item__content").each((i, e) => {
+      const div = $(e).find(".tab-thumb.c-image-hover");
+      const a = div.find("a")
+      const link = a.attr("href") || "";
+      projects.push({
+        cover_uri: a.find("img").attr("src") || "",
+        link,
+        id: this.getSlugProjectByUri(link),
+        title: a.attr("title") || "",
+        lastChapter: $(e).find(".font-meta.chapter").text().trim(),
+      });
+    });
+
+    return projects;
+  }
   async getProjectsBySearch(search: string): Promise<void | ReleaseProject[]> {}
 }
 
@@ -216,6 +242,5 @@ export class MomoNoHanaScansProject implements IProjectsController {
   title: "Capítulo 20 - Fim",
 }); */
 
-/* new MomoNoHanaScansProject("https://www.momonohanascan.com").getPagsByChapter(
-  ChapterTest
-); */
+/* new MomoNoHanaScansProject("https://www.momonohanascan.com").getProjectsByGenre("comedia");
+ */
