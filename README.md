@@ -4,10 +4,13 @@
 ##### Funções para fazer web scraping em sites de scans.
 - Home.
 - Detalhes.
-- Busca.
 - Capitulos.
-- Busca por generos.
 - Paginas
+- Buscar.
+- Buscar por gênero.
+
+**Buscar** e **Buscar por gênero** são funções opcionais.
+
 # Desenvolver
 #### instalação de dependencias
 ```bash
@@ -25,7 +28,7 @@ $ yarn
 ```
 
 # Extensões
-| Scan | Home | Detalhes | Busca | Capitulos | Busca por generos | Paginas | 
+| Scan | Home | Detalhes | Capitulos | Paginas | Buscar por gênero | Buscar | 
 | ---- | ---- | -------- | ----- | --------- | ----------------- | ------- |
-| [AMA Scans](https://amascan.com/) | ✔️ | ✔️ ️| ❌ | ✔️ | ✔️ |  ✔️
-| [Momo No Hana Scan](https://www.momonohanascan.com/) | ✔️ | ✔️ ️| ❌ | ✔️ | ❌ |  ✔️
+| [AMA Scans](https://amascan.com/) | ✔️ | ✔️ ️| ✔️ | ✔️ | ✔️ | ❌
+| [Momo No Hana Scan](https://www.momonohanascan.com/) | ✔️ | ✔️ ️| ✔️ | ✔️ | ❌ | ❌
