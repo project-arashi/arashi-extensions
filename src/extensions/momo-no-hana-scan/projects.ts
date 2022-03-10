@@ -71,6 +71,25 @@ export class MomoNoHanaScansProject implements IProjectsController {
     return infos;
   }
 
+  private CheerioProjectsSearchAndGenre($: CheerioAPI): ReleaseProject[] {
+    const projects: ReleaseProject[] = [];
+
+    $(".row.c-tabs-item__content").each((i, e) => {
+      const div = $(e).find(".tab-thumb.c-image-hover");
+      const a = div.find("a");
+      const link = a.attr("href") || "";
+      projects.push({
+        cover_uri: a.find("img").attr("src") || "",
+        link,
+        id: this.getSlugProjectByUri(link),
+        title: a.attr("title") || "",
+        lastChapter: $(e).find(".font-meta.chapter").text().trim(),
+      });
+    });
+
+    return projects;
+  }
+
   async getHome(): Promise<void | {
     lastestUpdates: ReleaseProject[];
     highlights: ReleaseProject[];
@@ -202,24 +221,25 @@ export class MomoNoHanaScansProject implements IProjectsController {
     }
     const $ = cheerio.load(data);
 
-    const projects: ReleaseProject[] = [];
-
-    $(".row.c-tabs-item__content").each((i, e) => {
-      const div = $(e).find(".tab-thumb.c-image-hover");
-      const a = div.find("a")
-      const link = a.attr("href") || "";
-      projects.push({
-        cover_uri: a.find("img").attr("src") || "",
-        link,
-        id: this.getSlugProjectByUri(link),
-        title: a.attr("title") || "",
-        lastChapter: $(e).find(".font-meta.chapter").text().trim(),
-      });
-    });
+    const projects = this.CheerioProjectsSearchAndGenre($);
 
     return projects;
   }
-  async getProjectsBySearch(search: string): Promise<void | ReleaseProject[]> {}
+  async getProjectsBySearch(search: string): Promise<void | ReleaseProject[]> {
+    const { data, status } = await this.router(
+      `/?s=${search}&post_type=wp-manga&op=&author=&artist=&release=&adult=`
+    );
+
+    if (status !== 200) {
+      throw new Error("Falha ao carregar a pagina com a busca");
+    }
+
+    const $ = cheerio.load(data);
+
+    const projects = this.CheerioProjectsSearchAndGenre($);
+
+    return projects;
+  }
 }
 
 // Use para testar alguma função em especifico
@@ -242,5 +262,6 @@ export class MomoNoHanaScansProject implements IProjectsController {
   title: "Capítulo 20 - Fim",
 }); */
 
-/* new MomoNoHanaScansProject("https://www.momonohanascan.com").getProjectsByGenre("comedia");
- */
+new MomoNoHanaScansProject(
+  "https://www.momonohanascan.com"
+).getProjectsBySearch("kanojo");
