@@ -4,6 +4,7 @@ export class ReleaseProject {
   public cover_uri: string;
   public banner_uri?: string;
   public lastChapter: string | number;
+  public lastChapterDate: string;
   public link: string;
   constructor(props: ReleaseProject) {
     Object.assign(this, props);
