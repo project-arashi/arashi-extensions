@@ -18,20 +18,34 @@ export class MomoNoHanaScansProject implements IProjectsController {
   private getSlugProjectByUri(url: string): string {
     return url.split("/")[4];
   }
-
+  private getSlugChapterByUri(url: string): string {
+    return url.replace(/.*manga\//, "");
+  }
   private CheerioLastestUpdates($: CheerioAPI): ReleaseProject[] {
     const lastestUpdates: ReleaseProject[] = [];
     $(".page-item-detail.manga").each((i, element) => {
       const div = $(element).find(".item-thumb.c-image-hover");
       const linkProject = div.find("a").attr("href") || "";
-      const lastChapter = $(element).find(".btn-link").first();
+      const lastChapter = $(element).find(".chapter-item").first();
+      const title = lastChapter.find(".btn-link");
 
+      const releaseDate = $(element).find(".post-on.font-meta").children("a");
       lastestUpdates.push({
         title: div.find("a").attr("title") || "",
         cover_uri: div.find("img").attr("src") || "",
         link: lastChapter.attr("href") || "",
         id: this.getSlugProjectByUri(linkProject) || "",
-        lastChapter: lastChapter.text() || "",
+        lastChapter: {
+          title: title.text().trim(),
+          link: title.attr("href") || "",
+          id: this.getSlugChapterByUri(lastChapter.attr("href") || ""),
+          id_project: this.getSlugProjectByUri(linkProject) || "",
+          number: title.text().trim().replace(/\w.* /, ""),
+          release_date:
+            releaseDate.length > 0
+              ? releaseDate.attr("title") || ""
+              : $(element).find(".post-on.font-meta").text().trim(),
+        },
       });
     });
     return lastestUpdates;
@@ -52,7 +66,14 @@ export class MomoNoHanaScansProject implements IProjectsController {
             .trim()
             .replace(/\n/gi, "") || "",
         link: chapterItem.attr("href") || "",
-        lastChapter: chapterItem.text() || "",
+        lastChapter: {
+          title: chapterItem.text() || "",
+          release_date: $(element).find(".post-on.font-meta").text().trim(),
+          id: this.getSlugChapterByUri(chapterItem.attr("href") || ""),
+          id_project: this.getSlugProjectByUri(id) || "",
+          number: chapterItem.text().trim().replace(/\w.* /, ""),
+          link: chapterItem.attr("href") || "",
+        },
         id: this.getSlugProjectByUri(id) || "",
         cover_uri: slider__thumb.find("img").attr("src") || "",
       });
@@ -83,7 +104,14 @@ export class MomoNoHanaScansProject implements IProjectsController {
         link,
         id: this.getSlugProjectByUri(link),
         title: a.attr("title") || "",
-        lastChapter: $(e).find(".font-meta.chapter").text().trim(),
+        lastChapter: {
+          title: $(e).find(".font-meta.chapter").text().trim(),
+          id: "",
+          id_project: "",
+          link: "",
+          number: "",
+          release_date: "",
+        },
       });
     });
 

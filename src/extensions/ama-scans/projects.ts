@@ -23,6 +23,13 @@ export class AmaScansProjects implements IProjectsController {
     return url.replace(item, "").replace(/\/.*/, "");
   }
 
+  private getSlugChapterByUrl(url: string): string {
+    return url.replace(/.*manga\//, "");
+  }
+
+  private getNumberByUrl(url: string): string {
+    return url.replace(/.*\//, "");
+  }
   //cria o array para os projetos em destaque
   private CheerioHighlightsHome($: CheerioAPI): ReleaseProject[] {
     const highlights: ReleaseProject[] = [];
@@ -31,14 +38,22 @@ export class AmaScansProjects implements IProjectsController {
 
       const cover_uri = img.attr("src") || "";
       const id = this.getSlugByUrl(cover_uri);
-      const title = img.attr("alt") || "";
+      const title = $(element).find(".label.label-warning");
       const lastChapter = $(element).find(".well > p > a");
+      const linkChapter = lastChapter.attr("href") || "";
       highlights.push({
         id,
-        title,
-        link: lastChapter.attr("href") || "",
+        title: title.text().trim(),
+        link: title.attr("href") || "",
         cover_uri,
-        lastChapter: lastChapter.text() || "",
+        lastChapter: {
+          title: lastChapter.text().trim() || "",
+          number: this.getNumberByUrl(linkChapter || ""),
+          link: linkChapter || "",
+          id: this.getSlugChapterByUrl(linkChapter || ""),
+          id_project: id,
+          release_date: "",
+        },
       });
     });
 
@@ -56,7 +71,14 @@ export class AmaScansProjects implements IProjectsController {
         id: cover_uri ? this.getSlugByUrl(cover_uri) : i,
         title: thumbnail.attr("alt") || "",
         cover_uri: cover_uri || "",
-        lastChapter: subtitle.text() || "",
+        lastChapter: {
+          title: subtitle.text() || "",
+          id: this.getSlugByUrl(href || ""),
+          link: href || "",
+          number: this.getNumberByUrl(href || ""),
+          id_project: cover_uri ? this.getSlugByUrl(cover_uri) : i,
+          release_date: $(element).find(".time").text().trim(),
+        },
         link: href || "",
       });
     });
@@ -240,7 +262,14 @@ export class AmaScansProjects implements IProjectsController {
         id: cover_uri ? this.getSlugByUrl(cover_uri) : i,
         title: a.find("img").attr("alt") || "",
         cover_uri: cover_uri || "",
-        lastChapter: subtitle.text() || "",
+        lastChapter: {
+          title: subtitle.text() || "",
+          id: this.getSlugByUrl(href || ""),
+          link: href || "",
+          number: this.getNumberByUrl(href || ""),
+          id_project: cover_uri ? this.getSlugByUrl(cover_uri) : i,
+          release_date: $(element).find(".time").text().trim(),
+        },
         link: href || "",
       });
     });
@@ -268,3 +297,5 @@ export class AmaScansProjects implements IProjectsController {
     number: "1",
     release_date: "2020-01-01",
 } */
+
+new AmaScansProjects("https://amascan.com").getHome();
