@@ -11,11 +11,7 @@ export class Project {
   public author: string;
   public artist: string;
   public adult: boolean;
-  public lastChapter: {
-    title: string;
-    number: number;
-    publish_at: string;
-  };
+  public lastChapter: Chapter;
   public chapters?: Chapter[];
   constructor(props: Project) {
     Object.assign(this, props);
