@@ -73,7 +73,7 @@ export class AmaScansProjects implements IProjectsController {
         cover_uri: cover_uri || "",
         lastChapter: {
           title: subtitle.text() || "",
-          id: this.getSlugByUrl(href || ""),
+          id: this.getSlugChapterByUrl(href || ""),
           link: href || "",
           number: this.getNumberByUrl(href || ""),
           id_project: cover_uri ? this.getSlugByUrl(cover_uri) : i,
