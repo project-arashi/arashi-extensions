@@ -63,23 +63,24 @@ export class AmaScansProjects implements IProjectsController {
   private CheerioLastestUpdatesHome($: CheerioAPI): ReleaseProject[] {
     const Projects: ReleaseProject[] = [];
     $(".col-sm-6").each((i, element) => {
-      const thumbnail = $(element).find(".thumbnail");
-      const cover_uri = thumbnail.attr("src");
+      const ContainerCover = $(element).find("div.media-left");
+      const link = ContainerCover.find("a").attr("href") || "";
+      const cover = ContainerCover.find(".thumbnail");
       const subtitle = $(element).find(".events-subtitle > a");
-      const href = subtitle.attr("href");
+      const hrefCap = subtitle.attr("href");
       Projects.push({
-        id: cover_uri ? this.getSlugByUrl(cover_uri) : i,
-        title: thumbnail.attr("alt") || "",
-        cover_uri: cover_uri || "",
+        id: this.getSlugByUrl(link),
+        title:cover.attr("alt") || "",
+        cover_uri: cover.attr("src") || "",
+        link,
         lastChapter: {
           title: subtitle.text() || "",
-          id: this.getSlugChapterByUrl(href || ""),
-          link: href || "",
-          number: this.getNumberByUrl(href || ""),
-          id_project: cover_uri ? this.getSlugByUrl(cover_uri) : i,
+          id: this.getSlugChapterByUrl(hrefCap || ""),
+          link: hrefCap || "",
+          number: this.getNumberByUrl(hrefCap || ""),
+          id_project: this.getSlugByUrl(link),
           release_date: $(element).find(".time").text().trim(),
         },
-        link: href || "",
       });
     });
     return Projects;
