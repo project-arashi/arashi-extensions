@@ -99,17 +99,19 @@ export class MomoNoHanaScansProject implements IProjectsController {
       const div = $(e).find(".tab-thumb.c-image-hover");
       const a = div.find("a");
       const link = a.attr("href") || "";
+      const titleChapter = $(e).find(".font-meta.chapter")
+      const linkChapter = titleChapter.find("a").attr("href") || ""
       projects.push({
         cover_uri: a.find("img").attr("src") || "",
         link,
         id: this.getSlugProjectByUri(link),
         title: a.attr("title") || "",
         lastChapter: {
-          title: $(e).find(".font-meta.chapter").text().trim(),
-          id: "",
-          id_project: "",
-          link: "",
-          number: "",
+          title:titleChapter.text().trim(),
+          id: this.getSlugChapterByUri(linkChapter),
+          id_project: this.getSlugProjectByUri(link),
+          link: linkChapter,
+          number:titleChapter.text().trim().replace(/\w.* /gim,""),
           release_date: "",
         },
       });
@@ -290,6 +292,6 @@ export class MomoNoHanaScansProject implements IProjectsController {
   title: "Capítulo 20 - Fim",
 }); */
 
-/* new MomoNoHanaScansProject(
+new MomoNoHanaScansProject(
   "https://www.momonohanascan.com"
-).getProjectsBySearch("kanojo"); */
+).getProjectsBySearch("kanojo");
