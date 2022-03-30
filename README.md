@@ -38,3 +38,4 @@ $ yarn
 | ---- | ---- | -------- | ----- | --------- | ----------------- | ------- |
 | [AMA Scans](https://amascan.com/) | ✔️ | ✔️ ️| ✔️ | ✔️ | ✔️ | ❌
 | [Momo No Hana Scan](https://www.momonohanascan.com/) | ✔️ | ✔️ ️| ✔️ | ✔️ | ✔️ | ✔️
+| [Tao Sect](https://taosect.com/) | ❌ | ❌ ️| ❌ | ❌ | ❌ | ❌
