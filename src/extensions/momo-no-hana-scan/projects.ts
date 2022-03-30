@@ -292,6 +292,6 @@ export class MomoNoHanaScansProject implements IProjectsController {
   title: "Capítulo 20 - Fim",
 }); */
 
-new MomoNoHanaScansProject(
+/* new MomoNoHanaScansProject(
   "https://www.momonohanascan.com"
-).getProjectsBySearch("kanojo");
+).getProjectsBySearch("kanojo"); */
